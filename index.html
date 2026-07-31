@@ -24,8 +24,9 @@ html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;
 button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:none;background:none;color:inherit}
 
 /* ======== screen ======== */
-.screen{width:375px;margin:0 auto;min-height:100vh;position:relative;overflow-x:hidden;overflow-y:auto;-webkit-overflow-scrolling:touch;background:var(--pb);display:none}
-.screen.active{display:block}
+.screen{width:375px;margin:0 auto;height:667px;position:relative;overflow:hidden;background:var(--pb);display:none}
+.screen.active{display:flex;flex-direction:column}
+.sm{flex:1;overflow-y:auto;-webkit-overflow-scrolling:touch}
 
 /* ======== switcher (designer) ======== */
 .sw{position:fixed;top:6px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.94);backdrop-filter:blur(8px);padding:4px;border-radius:99px;display:flex;gap:3px;box-shadow:0 2px 14px rgba(0,0,0,.13);z-index:99}
@@ -97,7 +98,7 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 .gc .arr{color:var(--is);font-size:20px}
 
 /* ======== bottom ======== */
-.bn{position:absolute;left:0;right:0;bottom:0;height:62px;padding-bottom:env(safe-area-inset-bottom,8px);background:var(--pc);display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 10px rgba(46,35,24,.05)}
+.bn{height:56px;padding-bottom:env(safe-area-inset-bottom,6px);background:var(--pc);display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 10px rgba(46,35,24,.05);flex:0 0 auto}
 .bn .it{display:flex;flex-direction:column;align-items:center;gap:3px;font-size:10px;color:var(--is);font-weight:500;cursor:pointer}
 .bn .it .ic{font-size:20px}
 .bn .it.ac{color:var(--cc);font-weight:700}
@@ -174,7 +175,7 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 .pi{padding:3px 8px;border-radius:6px;font-size:10px;background:var(--pb);color:var(--is)}
 .pi.on{background:var(--cc);color:#fff;font-weight:600}
 
-.ft{position:absolute;left:0;right:0;bottom:0;padding:10px 18px;background:var(--pb);padding-bottom:calc(env(safe-area-inset-bottom,8px) + 10px)}
+.ft{padding:10px 18px 14px;background:var(--pc);flex:0 0 auto;box-shadow:0 -2px 10px rgba(46,35,24,.06)}
 
 /* radio btn */
 .li{display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--pc);border-radius:12px;box-shadow:var(--sh);cursor:pointer;font-size:14px;margin-bottom:6px}
@@ -653,6 +654,25 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 </div>
 
 <script>
+/* wrap each screen's content into .sm scroll area; keep .bn and .ft outside */
+document.addEventListener('DOMContentLoaded',()=>{
+  document.querySelectorAll('.screen').forEach(s=>{
+    if(s.dataset.wrapped)return;
+    s.dataset.wrapped='1';
+    const bn=s.querySelector('.bn');
+    const ft=s.querySelector('.ft');
+    const sm=document.createElement('div');sm.className='sm';
+    [...s.children].forEach(el=>{
+      if(el===bn||el===ft)return;
+      sm.appendChild(el);
+    });
+    /* insert sm before the first of bn/ft; then ensure bn is last */
+    const anchor=bn||ft;
+    s.insertBefore(sm,anchor||null);
+    if(bn)s.appendChild(bn);
+    if(ft&&ft!==bn)s.insertBefore(ft,bn||null);
+  });
+});
 function go(i){
   document.querySelectorAll('.screen').forEach((s,k)=>s.classList.toggle('active',k===i));
   document.querySelectorAll('.sw button').forEach((b,k)=>b.classList.toggle('ac',k===i));
