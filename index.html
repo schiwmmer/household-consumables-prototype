@@ -202,6 +202,30 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 .dot.y{background:var(--sy);animation:breath 3s ease-in-out infinite}
 .dot.g{background:var(--sg)}
 @keyframes breath{0%,100%{opacity:.6}50%{opacity:1}}
+
+/* detail — slider adjust */
+.ui-range{-webkit-appearance:none;width:100%;height:6px;background:rgba(107,93,79,.15);border-radius:3px;outline:none}
+.ui-range::-webkit-slider-thumb{-webkit-appearance:none;width:26px;height:26px;border-radius:50%;background:var(--cc);border:3px solid #fff;box-shadow:0 2px 10px rgba(232,106,84,.45);cursor:pointer}
+.range-val{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+.range-val .lbl{font-size:12px;color:var(--is);font-weight:500}
+.range-val b{font-family:serif;font-size:22px;color:var(--cc)}
+.loc-line-wrap{display:flex;align-items:flex-end;gap:8px;margin:14px 0}
+.loc-line-wrap select{flex:1;height:38px;padding:0 28px 0 10px;border-bottom:1.5px solid var(--is);font-size:13px;color:var(--ik);appearance:none;background:transparent;cursor:pointer;border-radius:0}
+.loc-line-wrap select:focus{border-color:var(--cc)}
+.loc-line-wrap .loc-go{color:var(--cc);font-size:11px;white-space:nowrap;cursor:pointer;text-decoration:underline;text-underline-offset:2px;margin-bottom:8px}
+.mem-chips{display:flex;gap:8px;margin-bottom:14px}
+.mem-chip{flex:1;text-align:center;padding:8px 0;background:var(--pb);border-radius:10px;font-size:11px;cursor:pointer;border:1.5px solid transparent}
+.mem-chip.on{background:var(--pc);border-color:var(--cc);box-shadow:var(--sh)}
+.mem-chip .ic{font-size:18px;display:block;margin-bottom:3px}
+.mem-chip b{display:block;font-size:18px;color:var(--cc);margin-top:2px}
+.adj-card{display:flex;align-items:center;gap:10px;padding:8px 14px;background:var(--pc);border-radius:12px;box-shadow:var(--sh);margin-bottom:6px}
+.adj-card .nm{font-size:14px;font-weight:600;font-family:serif;flex:1;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.adj-card .stp{display:inline-flex;align-items:center;gap:6px}
+.adj-card .stp button{width:24px;height:24px;border-radius:50%;background:var(--pb);font-size:15px;cursor:pointer;display:flex;align-items:center;justify-content:center}
+.adj-card .stp button:active{background:var(--cc);color:#fff}
+.adj-card .stp input{width:28px;text-align:center;font-size:15px;font-weight:700;font-family:serif;border:none;background:transparent}
+.adj-card .days{font-size:11px;color:var(--is);white-space:nowrap;text-align:right}
+.adj-card .days b{color:var(--ik);font-size:13px}
 </style>
 </head>
 <body>
@@ -215,7 +239,8 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
   <button onclick="go(4)">⑤扫码</button>
   <button onclick="go(5)">⑥手动</button>
   <button onclick="go(6)">⑦模板</button>
-  <button onclick="go(7)">⑧我的</button>
+  <button onclick="go(8)">⑧批量</button>
+  <button onclick="go(7)">⑨我的</button>
 </div>
 
 <div class="toast" id="toast"></div>
@@ -292,44 +317,59 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
   </div>
 </div>
 
-<!-- ========== 1: detail ========== -->
+<!-- ========== 1: detail (拖动调整) ========== -->
 <div class="screen" id="s1">
   <div class="dh"><button class="back" onclick="go(0)">‹ 返回</button>
-    <div class="dt">维达棉韧抽纸</div><div class="ds">Vinda · 120抽 · 24包/箱</div></div>
+    <div class="dt">维达棉韧抽纸</div><div class="ds">Vinda · 120抽 · 3层</div></div>
 
   <div class="pr">
-    <span class="pil b">木浆 · 尺寸 200×180</span>
-    <span class="pil c">质量评分 4 / 5</span>
+    <span class="pil b">🧻 日用清洁</span>
+    <span class="pil c">⭐ 质量 4/5</span>
   </div>
-  <div class="he"><div class="num sy">5<small>天后用完</small></div>
-    <div class="ll">📍 客厅 / 白色柜子顶部</div></div>
-  <div class="bw"><i style="width:42%;background:var(--sy)"></i></div>
 
-  <div class="sc">
-    <div class="st">基础信息</div>
+  <!-- 三天内到期 Alert 状态 -->
+  <div class="bar" style="margin:0 18px 14px"><i style="width:42%;background:var(--sy)"></i></div>
+
+  <div class="card">
+    <div class="range-val"><span class="lbl">📦 剩余 (包)</span><b id="qtyVal">5</b></div>
+    <input type="range" class="ui-range" min="0" max="20" value="5" id="qtyRange" oninput="document.getElementById('qtyVal').textContent=this.value;calcEnd()">
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--im);margin-top:4px"><span>0</span><span id="qtyMax">当前库存上限</span><span>20</span></div>
+  </div>
+
+  <div class="card">
+    <div class="range-val"><span class="lbl">📅 预估使用天数</span><b id="daysVal">5</b></div>
+    <input type="range" class="ui-range" min="1" max="180" value="5" id="daysRange" oninput="document.getElementById('daysVal').textContent=this.value;calcEnd()">
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--im);margin-top:4px"><span>1天</span><span>半年</span><span>180天</span></div>
+  </div>
+
+  <div class="card">
+    <div class="hd">📍 储存位置</div>
+    <div class="loc-line-wrap">
+      <select id="locSel">
+        <option>客厅 / 白色柜子顶部</option>
+        <option>客厅 / 电视柜下</option>
+        <option>浴室 / 浴室柜第二层</option>
+        <option>厨房 / 吊柜左</option>
+        <option>主卧 / 梳妆台第二层</option>
+        <option>玄关 / 鞋柜下格</option>
+        <option>储藏室 / 铁架第三层</option>
+      </select>
+      <span class="loc-go" onclick="toast('编辑位置列表 (设置页管理)')">编辑</span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="st" style="margin-bottom:10px">基础信息</div>
     <div class="sl"><span class="k">分类</span><span class="v">日用清洁</span></div>
     <div class="sl"><span class="k">品牌</span><span class="v">维达 Vinda</span></div>
     <div class="sl"><span class="k">质量</span><span class="v">⭐⭐⭐⭐ 棉韧、压花，次于德宝</span></div>
-    <div class="sl"><span class="k">材质</span><span class="v">原生木浆</span></div>
-    <div class="sl"><span class="k">重量</span><span class="v">≈480 g / 包</span></div>
-    <div class="sl"><span class="k">体积</span><span class="v">240×120×95 mm</span></div>
     <div class="sl"><span class="k">场景</span><span class="v">客厅 · 日常 · 全屋</span></div>
-    <div class="sl"><span class="k">入库</span><span class="v">2026-07-15</span></div>
-    <div class="sl"><span class="k">单价</span><span class="v">￥3.28 / 包</span></div>
-  </div>
-
-  <div class="sc">
-    <div class="st">规格明细</div>
-    <div class="sl"><span class="k">抽数</span><span class="v">120 抽</span></div>
-    <div class="sl"><span class="k">张数</span><span class="v">240 张（2层）</span></div>
-    <div class="sl"><span class="k">尺寸</span><span class="v">200×180 mm</span></div>
-    <div class="sl"><span class="k">层数</span><span class="v">3</span></div>
   </div>
 
   <div class="cstack">
-    <button class="bx p">📦 开封新批次</button>
-    <button class="bx s">🗑 标记用完</button>
-    <button class="bx g">调整剩余量</button>
+    <button class="bx p" onclick="toast('✅ 已保存 · 剩余 '+document.getElementById('qtyRange').value+' 包 · '+document.getElementById('daysRange').value+' 天后用完')">💾 保存调整</button>
+    <button class="bx s" onclick="toast('已标记用完 · 移入已用完列表')">🗑 标记用完</button>
+    <button class="bx g" onclick="go(0)">取消</button>
   </div>
 </div>
 
@@ -537,68 +577,81 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
   </div>
 </div>
 
-<!-- ========== 6: templates ========== -->
+<!-- ========== 6: templates (人数选择 → 批量调整) ========== -->
 <div class="screen" id="s6">
   <div class="cp-top"><button class="back" onclick="go(0)">‹ 返回</button><h2>📦 模版导入</h2></div>
 
   <div class="cp-area">
-    <div style="font-size:56px">🎁</div>
-    <div class="scan-tip">选择一个模版 · 一键导入一组常用商品<br/>每个商品已帮你填好默认规格 · 倒入后按实际数量微调</div>
+    <div style="font-size:48px">👨‍👩‍👧</div>
+    <div class="scan-tip">先选家中人数 · 再选模版<br/>系统会根据人数自动推荐商品数量</div>
   </div>
 
   <div class="card">
-    <div class="hd">选择模版</div>
-    <div class="li on">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:32px">🍼</div>
-        <div>
-          <div style="font-size:15px;font-weight:600">母婴待产包</div>
-          <div class="meta-r">共 <b>32</b> 项 · 预估 <b>¥ 1,480</b></div>
-        </div>
-      </div>
-      <div class="rc"></div>
-    </div>
-    <div class="li">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:32px">🌾</div>
-        <div>
-          <div style="font-size:15px;font-weight:600">粮油干货常备</div>
-          <div class="meta-r">共 <b>28</b> 项 · 预估 <b>¥ 620</b></div>
-        </div>
-      </div>
-      <div class="rc"></div>
-    </div>
-    <div class="li">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:32px">🧹</div>
-        <div>
-          <div style="font-size:15px;font-weight:600">日用清洁套装</div>
-          <div class="meta-r">共 <b>41</b> 项 · 预估 <b>¥ 480</b></div>
-        </div>
-      </div>
-      <div class="rc"></div>
-    </div>
-    <div class="li">
-      <div style="display:flex;align-items:center;gap:10px">
-        <div style="font-size:32px">💊</div>
-        <div>
-          <div style="font-size:15px;font-weight:600">家庭急救药箱</div>
-          <div class="meta-r">共 <b>18</b> 项 · 预估 <b>¥ 320</b></div>
-        </div>
-      </div>
-      <div class="rc"></div>
+    <div class="st">家中人数</div>
+    <div class="mem-chips">
+      <div class="mem-chip on" onclick="setMem(this)"><span class="ic">👴</span>老人<b id="nOld">0</b></div>
+      <div class="mem-chip on" onclick="setMem(this)"><span class="ic">👨</span>大人<b id="nAdt">2</b></div>
+      <div class="mem-chip" onclick="setMem(this)"><span class="ic">👶</span>小孩<b id="nKid">0</b></div>
     </div>
   </div>
 
-  <button class="act-w" style="margin:0 18px" onclick="runTpl()">✨ 一键导入 · 母婴待产包 (32 项)</button>
+  <button class="act-w" id="memAdjustBtn" onclick="go(8)">继续选择模版 ›</button>
 
-  <div class="card" id="tplDone" style="display:none">
-    <div class="hd">✓ 母婴待产包 已导入</div>
-    <div style="text-align:center;padding:14px 0">
-      <div style="font-size:48px">🍼🎉</div>
-      <div style="font-size:13px;color:var(--is);margin-top:8px;line-height:1.6">已成功创建 <b>32 件商品</b><br/>已按"母婴房/尿布台"默认位置收纳<br/>返回首页即可看到 · 按需修改数量</div>
+  <div class="card" id="tplChoice" style="display:none">
+    <div class="hd">选择模版</div>
+    <div class="li on" onclick="selTpl(this)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">🍼</div><div><div style="font-size:14px;font-weight:600">母婴待产包</div><div class="meta-r">共 <b>32</b> 项 · 适用 1 大人 + N 小孩</div></div>
+      </div><div class="rc"></div>
     </div>
-    <button class="act-w" onclick="toast('🎁 母婴待产包 已导入 32 件商品');go(0)">📒 回首页看看</button>
+    <div class="li" onclick="selTpl(this)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">🌾</div><div><div style="font-size:14px;font-weight:600">粮油干货常备</div><div class="meta-r">共 <b>28</b> 项 · 与人数相关</div></div>
+      </div><div class="rc"></div>
+    </div>
+    <div class="li" onclick="selTpl(this)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">🧹</div><div><div style="font-size:14px;font-weight:600">日用清洁套装</div><div class="meta-r">共 <b>41</b> 项 · 全家共享</div></div>
+      </div><div class="rc"></div>
+    </div>
+    <div class="li" onclick="selTpl(this)">
+      <div style="display:flex;align-items:center;gap:10px">
+        <div style="font-size:28px">💊</div><div><div style="font-size:14px;font-weight:600">家庭急救药箱</div><div class="meta-r">共 <b>18</b> 项 · 必备常备</div></div>
+      </div><div class="rc"></div>
+    </div>
+  </div>
+
+  <button class="act-w" style="margin:0 18px 12px" id="tplGoBtn" style="display:none" onclick="go(8)">进入批量调整 ›</button>
+
+  <div class="bn">
+    <div class="it" onclick="go(0)"><div class="ic">📒</div>首页</div>
+    <div class="it ac"><div class="ic">➕</div>录入</div>
+    <div class="it" onclick="go(7)"><div class="ic">👤</div>我的</div>
+  </div>
+</div>
+
+<!-- ========== 8: 批量调整页 ========== -->
+<div class="screen" id="s8">
+  <div class="dh"><button class="back" onclick="go(0)">‹ 返回</button>
+    <div class="dt">母婴待产包 · 批量调整</div>
+    <div class="ds">共 32 项 · 大人 2 · 小孩 0 · 老人 0</div></div>
+
+  <div class="pr" style="margin:12px 18px 0">
+    <span class="pil b">按推荐数量预填</span>
+    <span class="pil b" style="background:rgba(232,184,74,.28);color:#7A5818">修改后自动保存</span>
+  </div>
+
+  <div style="padding:6px 18px 80px;display:flex;flex-direction:column;gap:5px">
+    <div class="adj-card"><div class="nm">产褥垫 10片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="2" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>30</b> 天</div></div>
+    <div class="adj-card"><div class="nm">防溢乳垫 36片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="2" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>15</b> 天</div></div>
+    <div class="adj-card"><div class="nm">一次性内裤 6条</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>7</b> 天</div></div>
+    <div class="adj-card"><div class="nm">月子服 2套</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>60</b> 天</div></div>
+    <div class="adj-card"><div class="nm">婴儿纸尿裤 NB 60片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
+    <div class="adj-card"><div class="nm">婴儿湿巾 80抽</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
+    <div class="adj-card"><div class="nm">护臀膏 1支</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
+    <div class="adj-card"><div class="nm">吸奶器 1个</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>90</b> 天</div></div>
+    <div class="adj-card"><div class="nm">哺乳巾 2条</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>60</b> 天</div></div>
+    <div class="adj-card"><div class="nm">储奶袋 20片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>30</b> 天</div></div>
   </div>
 
   <div class="bn">
@@ -715,6 +768,29 @@ function runScan(btn){
 function runTpl(){
   document.getElementById('tplDone').style.display='block';
   event.target.style.display='none';
+}
+function selTpl(el){
+  document.querySelectorAll('#tplChoice .li').forEach(e=>e.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('tplGoBtn').style.display='block';
+}
+function setMem(el){
+  el.classList.toggle('on');
+}
+function adj(btn,delta){
+  const inp=btn.parentElement.querySelector('input');
+  let v=parseInt(inp.value)||0;
+  v=Math.max(0,v+delta);
+  inp.value=v;
+  const daysEl=btn.closest('.adj-card').querySelector('.days b');
+  if(daysEl && v===0) daysEl.textContent='—';
+  else if(daysEl) daysEl.textContent=Math.max(1,v*15)+'';
+}
+function calcEnd(){
+  const q=parseInt(document.getElementById('qtyRange').value)||0;
+  const d=parseInt(document.getElementById('daysRange').value)||1;
+  const used=Math.min(100,Math.round((1-q/20)*100));
+  document.querySelector('#s1 .bar i').style.width=used+'%';
 }
 </script>
 </body>
