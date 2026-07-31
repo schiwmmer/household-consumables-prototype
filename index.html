@@ -641,29 +641,28 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
   </div>
 </div>
 
-<!-- ========== 8: 批量调整页 ========== -->
+<!-- ========== 8: 批量调整页（首页竖排陈列 + 家庭人数步进器） ========== -->
 <div class="screen" id="s8">
-  <div class="dh"><button class="back" onclick="go(6)">‹ 返回</button>
-    <div class="dt">母婴待产包 · 批量调整</div>
-    <div class="ds">共 32 项 · 大人 2 · 小孩 0 · 老人 0</div></div>
+  <div class="cp-top"><button class="back" onclick="go(0)">‹ 返回</button><h2>📦 母婴待产包 · 批量调整</h2></div>
+
+  <div class="card" style="margin-top:12px">
+    <div class="st">家中人数</div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👴 老人</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('bOld',-1)">−</button><b id="bOld" style="font-size:18px;min-width:20px">0</b><button class="step-btn" onclick="stepMem('bOld',1)">+</button></div></div>
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👨 大人</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('bAdt',-1)">−</button><b id="bAdt" style="font-size:18px;min-width:20px">2</b><button class="step-btn" onclick="stepMem('bAdt',1)">+</button></div></div>
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👶 小孩</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('bKid',-1)">−</button><b id="bKid" style="font-size:18px;min-width:20px">0</b><button class="step-btn" onclick="stepMem('bKid',1)">+</button></div></div>
+    </div>
+    <div style="font-size:11px;color:var(--im);margin-top:10px;text-align:center">人数变化后，下方所有商品数量会自动按人数重算</div>
+  </div>
 
   <div class="pr" style="margin:12px 18px 0">
     <span class="pil b">按推荐数量预填</span>
     <span class="pil b" style="background:rgba(232,184,74,.28);color:#7A5818">修改后自动保存</span>
   </div>
 
-  <div style="padding:6px 18px 80px;display:flex;flex-direction:column;gap:5px">
-    <div class="adj-card"><div class="nm">产褥垫 10片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="2" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>30</b> 天</div></div>
-    <div class="adj-card"><div class="nm">防溢乳垫 36片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="2" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>15</b> 天</div></div>
-    <div class="adj-card"><div class="nm">一次性内裤 6条</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>7</b> 天</div></div>
-    <div class="adj-card"><div class="nm">月子服 2套</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>60</b> 天</div></div>
-    <div class="adj-card"><div class="nm">婴儿纸尿裤 NB 60片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
-    <div class="adj-card"><div class="nm">婴儿湿巾 80抽</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
-    <div class="adj-card"><div class="nm">护臀膏 1支</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="0" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>—</b> 小孩0</div></div>
-    <div class="adj-card"><div class="nm">吸奶器 1个</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>90</b> 天</div></div>
-    <div class="adj-card"><div class="nm">哺乳巾 2条</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>60</b> 天</div></div>
-    <div class="adj-card"><div class="nm">储奶袋 20片</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="1" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>30</b> 天</div></div>
-  </div>
+  <div style="padding:6px 18px 80px;display:flex;flex-direction:column;gap:8px" id="adjList"></div>
+
+  <div class="ft"><button class="act-w" onclick="adjDone()">确认导入</button></div>
 
   <div class="bn">
     <div class="it" onclick="go(0)"><div class="ic">📒</div>首页</div>
@@ -738,10 +737,17 @@ document.addEventListener('DOMContentLoaded',()=>{
   });
 });
 function go(i){
-  document.querySelectorAll('.screen').forEach((s,k)=>s.classList.toggle('active',k===i));
+  const target=document.getElementById('s'+i);
+  if(target) target.classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>{
+    if(s.id!=='s'+i) s.classList.remove('active');
+  });
+  /* debug */ if(window.__dbg){console.log('go',i,'targetId='+(target?.id));}
   document.querySelectorAll('.sw button').forEach((b,k)=>b.classList.toggle('ac',k===i));
   window.scrollTo(0,0);
 }
+/* expose for verify */
+window.__dbg=true;
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),1800);
@@ -794,6 +800,40 @@ function stepMem(id, delta){
   let v=parseInt(el.textContent)||0;
   v=Math.max(0,v+delta);
   el.textContent=v;
+  if(id.startsWith('b')) renderAdj();
+}
+const adjItems=[
+  {nm:'产褥垫 10片',by:'adt',base:1,days:14},
+  {nm:'产褥卫生巾 M/L 混装',by:'adt',base:2,days:14},
+  {nm:'防溢乳垫 可洗 6片',by:'adt',base:2,days:60},
+  {nm:'一次性内裤 6条',by:'adt',base:1,days:10},
+  {nm:'月子服 2套',by:'adt',base:1,days:180},
+  {nm:'吸管杯 1个',by:'adt',base:1,days:180},
+  {nm:'婴儿纸尿裤 NB 60片',by:'kid',base:2,days:7},
+  {nm:'婴儿湿巾 80抽',by:'kid',base:2,days:14},
+  {nm:'护臀膏 1支',by:'kid',base:1,days:60},
+  {nm:'婴儿润肤乳 1瓶',by:'kid',base:1,days:60},
+  {nm:'婴儿浴盆 1个',by:'kid',base:1,days:180},
+  {nm:'奶瓶 240ml 2个',by:'kid',base:1,days:180}
+];
+function renderAdj(){
+  let a=parseInt(document.getElementById('bAdt')?.textContent)||0;
+  let k=parseInt(document.getElementById('bKid')?.textContent)||0;
+  let o=parseInt(document.getElementById('bOld')?.textContent)||0;
+  const list=document.getElementById('adjList');
+
+  let h='';
+  adjItems.forEach(it=>{
+    let mult=it.by==='kid'?(k||0):(a||0);
+    if(!mult)mult=it.by==='kid'?0:(a||0);
+    let qty=Math.round(it.base*mult);
+    if(it.by==='kid'&&k===0)qty=0;
+    if(it.by==='adt'&&a===0)qty=it.base;
+    let days=qty?it.days:0;
+    h+=`<div class="adj-card"><div class="nm">${it.nm}</div><div class="stp"><button onclick="adj(this,-1)">−</button><input value="${qty}" readonly><button onclick="adj(this,1)">+</button></div><div class="days"><b>${days?days+' 天':'—'}</b></div></div>`;
+  });
+  list.innerHTML=h;
+  document.querySelector('#s8 .cp-top h2').textContent=`母婴待产包 · 共 ${adjItems.length} 项 · 大${a} 小${k} 老${o}`;
 }
 function adj(btn,delta){
   const inp=btn.parentElement.querySelector('input');
@@ -802,8 +842,21 @@ function adj(btn,delta){
   inp.value=v;
   const daysEl=btn.closest('.adj-card').querySelector('.days b');
   if(daysEl && v===0) daysEl.textContent='—';
-  else if(daysEl) daysEl.textContent=Math.max(1,v*15)+'';
+  else if(daysEl){
+    const inpVal=parseInt(inp.value);
+    const it=adjItems[Array.from(document.querySelectorAll('.adj-card')).indexOf(btn.closest('.adj-card'))];
+    if(it) daysEl.textContent=(it.days)+' 天';
+  }
 }
+function adjDone(){
+  const cards=document.querySelectorAll('#adjList .adj-card');
+  let tot=0;cards.forEach(c=>tot+=parseInt(c.querySelector('input').value)||0);
+  toast(`已导入 ${tot} 件 · 已加入倒计时`);
+  setTimeout(()=>go(0),800);
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  setTimeout(()=>renderAdj(),100);
+});
 function calcEnd(){
   const q=parseInt(document.getElementById('qtyRange').value)||0;
   const d=parseInt(document.getElementById('daysRange').value)||1;
