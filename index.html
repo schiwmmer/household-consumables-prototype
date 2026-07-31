@@ -742,12 +742,10 @@ function go(i){
   document.querySelectorAll('.screen').forEach(s=>{
     if(s.id!=='s'+i) s.classList.remove('active');
   });
-  /* debug */ if(window.__dbg){console.log('go',i,'targetId='+(target?.id));}
+  if(i===8) renderAdj();
   document.querySelectorAll('.sw button').forEach((b,k)=>b.classList.toggle('ac',k===i));
   window.scrollTo(0,0);
 }
-/* expose for verify */
-window.__dbg=true;
 function toast(msg){
   const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');
   clearTimeout(t._tm);t._tm=setTimeout(()=>t.classList.remove('show'),1800);
