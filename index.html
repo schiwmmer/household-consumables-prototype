@@ -226,6 +226,8 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 .adj-card .stp input{width:28px;text-align:center;font-size:15px;font-weight:700;font-family:serif;border:none;background:transparent}
 .adj-card .days{font-size:11px;color:var(--is);white-space:nowrap;text-align:right}
 .adj-card .days b{color:var(--ik);font-size:13px}
+.step-btn{width:28px;height:28px;border-radius:50%;background:var(--pc);color:var(--ik);font-size:18px;font-weight:700;cursor:pointer;display:inline-flex;align-items:center;justify-content:center;box-shadow:var(--sh)}
+.step-btn:active{background:var(--cc);color:#fff}
 </style>
 </head>
 <body>
@@ -588,16 +590,25 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 
   <div class="card">
     <div class="st">家中人数</div>
-    <div class="mem-chips">
-      <div class="mem-chip on" onclick="setMem(this)"><span class="ic">👴</span>老人<b id="nOld">0</b></div>
-      <div class="mem-chip on" onclick="setMem(this)"><span class="ic">👨</span>大人<b id="nAdt">2</b></div>
-      <div class="mem-chip" onclick="setMem(this)"><span class="ic">👶</span>小孩<b id="nKid">0</b></div>
+    <div style="display:flex;gap:8px">
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👴 老人</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('nOld',-1)">−</button><b id="nOld" style="font-size:18px;min-width:20px">0</b><button class="step-btn" onclick="stepMem('nOld',1)">+</button></div></div>
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👨 大人</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('nAdt',-1)">−</button><b id="nAdt" style="font-size:18px;min-width:20px">2</b><button class="step-btn" onclick="stepMem('nAdt',1)">+</button></div></div>
+      <div style="flex:1;background:var(--pb);border-radius:12px;padding:10px;text-align:center"><div style="font-size:16px">👶 小孩</div><div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:8px"><button class="step-btn" onclick="stepMem('nKid',-1)">−</button><b id="nKid" style="font-size:18px;min-width:20px">0</b><button class="step-btn" onclick="stepMem('nKid',1)">+</button></div></div>
+    </div>
+    <div style="font-size:11px;color:var(--im);margin-top:10px;text-align:center">数量变化后模版推荐数量会同步更新</div>
+  </div>
+
+  <div style="padding:0 18px;margin-bottom:12px">
+    <div class="switch-btns">
+      <button class="on" onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on')">全部模版</button>
+      <button onclick="this.parentElement.querySelectorAll('button').forEach(b=>b.classList.remove('on'));this.classList.add('on');toast('已按人数预筛推荐模版')">按人数推荐</button>
     </div>
   </div>
 
-  <button class="act-w" id="memAdjustBtn" onclick="go(8)">继续选择模版 ›</button>
+  <button class="act-w" style="margin:0 18px 12px" onclick="document.getElementById('tplBox').style.display='block'">继续选择模版 ›</button>
 
-  <div class="card" id="tplChoice" style="display:none">
+  <div class="card" id="tplBox" style="display:none">
+  <button onclick="this.parentElement.style.display='none'" style="position:absolute;right:12px;top:10px;border:0;background:0;font-size:20px;cursor:pointer;color:var(--im)">×</button>
     <div class="hd">选择模版</div>
     <div class="li on" onclick="selTpl(this)">
       <div style="display:flex;align-items:center;gap:10px">
@@ -621,7 +632,7 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
     </div>
   </div>
 
-  <button class="act-w" style="margin:0 18px 12px" id="tplGoBtn" style="display:none" onclick="go(8)">进入批量调整 ›</button>
+  <button class="act-w" style="margin:0 18px 12px" id="tplGoBtn" onclick="go(8)">进入批量调整 ›</button>
 
   <div class="bn">
     <div class="it" onclick="go(0)"><div class="ic">📒</div>首页</div>
@@ -770,12 +781,19 @@ function runTpl(){
   event.target.style.display='none';
 }
 function selTpl(el){
-  document.querySelectorAll('#tplChoice .li').forEach(e=>e.classList.remove('on'));
+  document.querySelectorAll('#tplBox .li').forEach(e=>e.classList.remove('on'));
   el.classList.add('on');
   document.getElementById('tplGoBtn').style.display='block';
+  document.getElementById('tplBox').style.display='none';
 }
 function setMem(el){
   el.classList.toggle('on');
+}
+function stepMem(id, delta){
+  const el=document.getElementById(id);
+  let v=parseInt(el.textContent)||0;
+  v=Math.max(0,v+delta);
+  el.textContent=v;
 }
 function adj(btn,delta){
   const inp=btn.parentElement.querySelector('input');
