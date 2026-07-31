@@ -45,69 +45,34 @@ log.selTplActive = await page.evaluate(() => ({
   liOn: document.querySelector('#tplBox .li.on')?.textContent?.trim()?.slice(0,4)
 }));
 // 直接调用 go
-await page.evaluate(() => {
-  window.__dbgLst = [];
-  window.__dbgOrig = window.go;
-  window.go = function(i){
-    window.__dbgLst.push(i);
-    const target=document.getElementById('s'+i);
-    if(target) target.classList.add('active');
-    const all = [...document.querySelectorAll('.screen')];
-    window.__dbgIds = all.map(s=>s.id);
-    all.forEach(s=>{
-      if(s.id!=='s'+i) s.classList.remove('active');
-    });
-    return;
-  };
-});
 await page.evaluate(() => { go(8); });
-await page.waitForTimeout(50);
-log.go8direct = await page.evaluate(() => {
-  const s8 = document.getElementById('s8');
-  const s7 = document.getElementById('s7');
-  return {
-    active: document.querySelector('.screen.active')?.id,
-    activeArr: [...document.querySelectorAll('.screen.active')].map(s=>s.id),
-    s8cls: s8?.className,
-    s7cls: s7?.className,
-    allScreenIds: __dbgIds,
-    callLog: __dbgLst
-  };
-});
-log.batchPagePre = await page.evaluate(() => ({
+await page.waitForTimeout(300);
+log.go8direct = await page.evaluate(() => ({
   active: document.querySelector('.screen.active')?.id,
-  h2: document.querySelector('#s8 .cp-top h2')?.textContent,
-  adjListExists: !!document.getElementById('adjList'),
-  adjCardCount: document.querySelectorAll('#adjList .adj-card').length
-}));
-log.batchPage = await page.evaluate(() => ({
-  active: document.querySelector('.screen.active')?.id,
-  rows: document.querySelectorAll('#adjList .adj-card').length,
+  adjCardCount: document.querySelectorAll('#adjList .adj-card').length,
   first3: [...document.querySelectorAll('#adjList .adj-card')].slice(0,3).map(c => ({
     nm: c.querySelector('.nm')?.textContent, v: c.querySelector('input')?.value, d: c.querySelector('.days b')?.textContent
   })),
   last3: [...document.querySelectorAll('#adjList .adj-card')].slice(-3).map(c => ({
     nm: c.querySelector('.nm')?.textContent, v: c.querySelector('input')?.value, d: c.querySelector('.days b')?.textContent
-  })),
-  title: document.querySelector('#s8 .cp-top h2')?.textContent,
-  bnBottom: document.querySelector('#s8 .bn')?.getBoundingClientRect()?.bottom
+  }))
 }));
+log.afterStepTitle = await page.evaluate(() => document.querySelector('#s8 .cp-top h2')?.textContent);
 
-/* 4) 加 1 小孩 + 1 大人，观察数量变化 */
-await page.evaluate(() => {
-  const btns = document.querySelectorAll('.step-btn');
-  btns[3].click(); // bAdt +
-});
+/* 4) 通过 stepMem 直接调 —— 不受重渲染影响 */
+await page.evaluate(() => { stepMem('bAdt', 1); });
 await page.waitForTimeout(300);
-await page.evaluate(() => {
-  const btns = document.querySelectorAll('.step-btn');
-  btns[5].click(); // bKid +
-});
+await page.evaluate(() => { stepMem('bKid', 1); });
 await page.waitForTimeout(300);
 log.afterStep = await page.evaluate(() => ({
   title: document.querySelector('#s8 .cp-top h2')?.textContent,
-  rowEx: [...document.querySelectorAll('#adjList .adj-card')].slice(0,5).map(c => ({
+  bAdt: document.getElementById('bAdt')?.textContent,
+  bKid: document.getElementById('bKid')?.textContent,
+  first5: [...document.querySelectorAll('#adjList .adj-card')].slice(0,5).map(c => ({
     nm: c.querySelector('.nm')?.textContent?.slice(0,6), v: c.querySelector('input')?.value, d: c.querySelector('.days b')?.textContent
+  })),
+  kid5: [...document.querySelectorAll('#adjList .adj-card')].slice(6,12).map(c => ({
+    nm: c.querySelector('.nm')?.textContent?.slice(0,4), v: c.querySelector('input')?.value, d: c.querySelector('.days b')?.textContent
   }))
 }));
 

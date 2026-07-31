@@ -322,20 +322,14 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
 <!-- ========== 1: detail (拖动调整) ========== -->
 <div class="screen" id="s1">
   <div class="dh"><button class="back" onclick="go(0)">‹ 返回</button>
-    <div class="dt">维达棉韧抽纸</div><div class="ds">Vinda · 120抽 · 3层</div></div>
+    <div class="dt">维达棉韧抽纸</div><div class="ds">Vinda · 日用清洁</div></div>
 
-  <div class="pr">
-    <span class="pil b">🧻 日用清洁</span>
-    <span class="pil c">⭐ 质量 4/5</span>
-  </div>
-
-  <!-- 三天内到期 Alert 状态 -->
-  <div class="bar" style="margin:0 18px 14px"><i style="width:42%;background:var(--sy)"></i></div>
+  <div class="bar" style="margin:12px 18px 14px"><i style="width:42%;background:var(--sy)"></i></div>
 
   <div class="card">
     <div class="range-val"><span class="lbl">📦 剩余 (包)</span><b id="qtyVal">5</b></div>
     <input type="range" class="ui-range" min="0" max="20" value="5" id="qtyRange" oninput="document.getElementById('qtyVal').textContent=this.value;calcEnd()">
-    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--im);margin-top:4px"><span>0</span><span id="qtyMax">当前库存上限</span><span>20</span></div>
+    <div style="display:flex;justify-content:space-between;font-size:10px;color:var(--im);margin-top:4px"><span>0</span><span>当前库存上限</span><span>20</span></div>
   </div>
 
   <div class="card">
@@ -345,9 +339,9 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
   </div>
 
   <div class="card">
-    <div class="hd">📍 储存位置</div>
+    <div class="hd" style="margin-bottom:8px">📍 储存位置</div>
     <div class="loc-line-wrap">
-      <select id="locSel">
+      <select id="locSel" style="width:100%">
         <option>客厅 / 白色柜子顶部</option>
         <option>客厅 / 电视柜下</option>
         <option>浴室 / 浴室柜第二层</option>
@@ -356,21 +350,12 @@ button,input,textarea{font-family:inherit;font-size:inherit;outline:none;border:
         <option>玄关 / 鞋柜下格</option>
         <option>储藏室 / 铁架第三层</option>
       </select>
-      <span class="loc-go" onclick="toast('编辑位置列表 (设置页管理)')">编辑</span>
     </div>
-  </div>
-
-  <div class="card">
-    <div class="st" style="margin-bottom:10px">基础信息</div>
-    <div class="sl"><span class="k">分类</span><span class="v">日用清洁</span></div>
-    <div class="sl"><span class="k">品牌</span><span class="v">维达 Vinda</span></div>
-    <div class="sl"><span class="k">质量</span><span class="v">⭐⭐⭐⭐ 棉韧、压花，次于德宝</span></div>
-    <div class="sl"><span class="k">场景</span><span class="v">客厅 · 日常 · 全屋</span></div>
+    <div style="font-size:11px;color:var(--im);margin-top:6px;text-align:right;cursor:pointer" onclick="toast('编辑位置列表 · 跳转到设置页')">编辑位置 ›</div>
   </div>
 
   <div class="cstack">
     <button class="bx p" onclick="toast('✅ 已保存 · 剩余 '+document.getElementById('qtyRange').value+' 包 · '+document.getElementById('daysRange').value+' 天后用完')">💾 保存调整</button>
-    <button class="bx s" onclick="toast('已标记用完 · 移入已用完列表')">🗑 标记用完</button>
     <button class="bx g" onclick="go(0)">取消</button>
   </div>
 </div>
