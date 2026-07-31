@@ -1,0 +1,405 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+<title>囤耗材 · UI 原型 v2</title>
+<style>
+/* ======== design tokens ======== */
+:root{
+  --paper-base:#F7F0E3;
+  --paper-card:#FFFEF9;
+  --ink:#2E2318;
+  --ink-soft:#6B5D4F;
+  --ink-mute:#9B8E7E;
+  --brand-butter:#E8B84A;
+  --brand-coral:#E86A54;
+  --status-green:#5BBF8A;
+  --status-yellow:#E8B84A;
+  --status-red:#E85E4A;
+  --shadow-card:0 2px 12px rgba(46,35,24,.06);
+  --shadow-fab:0 4px 16px rgba(46,35,24,.18);
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{font-family:-apple-system,BlinkMacSystemFont,"PingFang SC",sans-serif;background:#F7F0E3;color:var(--ink);line-height:1.5;-webkit-font-smoothing:antialiased}
+
+.screen{width:375px;margin:0 auto;min-height:812px;position:relative;overflow:hidden;background:var(--paper-base);display:none}
+.screen.active{display:block}
+
+/* ======== topbar ======== */
+.topbar{padding:24px 32px 12px;display:flex;align-items:center;justify-content:space-between}
+.topbar .brand{font-size:24px;color:var(--ink-soft);font-weight:500}
+.topbar .brand em{font-style:normal;color:var(--brand-coral);font-family:serif;font-size:32px;margin-right:6px}
+.topbar .avatar{width:64px;height:64px;border-radius:50%;background:var(--brand-butter);display:flex;align-items:center;justify-content:center;font-size:32px;color:#fff;font-weight:700;border:3px solid var(--paper-card);box-shadow:var(--shadow-card)}
+
+/* ======== 4 功能按钮 ======== */
+.four-btn-row{display:flex;gap:12px;padding:0 32px;margin-bottom:24px}
+.fq{flex:1;display:flex;flex-direction:column;align-items:center;padding:20px 0 16px;gap:12px;background:var(--paper-card);border:2px solid var(--ink);cursor:pointer;transition:all .2s}
+.fq:active{transform:scale(.96)}
+.fq .ico{font-size:48px;line-height:1}
+.fq .lbl{font-size:22px;font-weight:600;color:var(--ink);letter-spacing:.5px}
+.fq .sub{font-size:18px;color:var(--ink-mute)}
+.fq.one{border-radius:24px 8px 24px 8px;background:rgba(232,184,74,.08)}
+.fq.two{border-radius:8px 24px 8px 24px;background:rgba(232,184,74,.08)}
+.fq.three{border-radius:24px 8px 24px 8px}
+.fq.four{border-radius:8px 24px 8px 24px}
+
+/* ======== 通用卡片 ======== */
+.card{background:var(--paper-card);border-radius:24px;margin:0 32px 24px;box-shadow:var(--shadow-card);padding:28px}
+.card h3{font-size:22px;color:var(--ink-soft);font-weight:600;text-transform:uppercase;letter-spacing:1px;margin-bottom:20px;display:flex;align-items:center;gap:8px}
+.card h3 .step{display:inline-flex;align-items:center;justify-content:center;width:36px;height:36px;border-radius:50%;background:var(--brand-coral);color:#fff;font-size:20px;font-weight:700}
+
+/* ======== 模版导入 ======== */
+.tpl-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.tpl-item{background:var(--paper-base);border-radius:16px;padding:20px 16px;text-align:center;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:10px;border:2px dashed transparent;transition:all .2s}
+.tpl-item:active,.tpl-item:hover{border-color:var(--brand-coral)}
+.tpl-item .emoji{font-size:48px;line-height:1}
+.tpl-item .name{font-size:24px;font-weight:600;color:var(--ink);letter-spacing:.5px}
+.tpl-item .num{font-size:20px;color:var(--ink-mute)}
+
+/* ======== 今日提醒 ======== */
+.alert-num{display:flex;gap:24px;margin-bottom:24px}
+.alert-cell{flex:1;text-align:center}
+.alert-cell .num{font-family:serif;font-weight:700;font-size:64px;line-height:1}
+.alert-cell .num.warn{color:var(--status-yellow)}
+.alert-cell .num.over{color:var(--status-red)}
+alert-cell .lbl{font-size:22px;color:var(--ink-soft);margin-top:4px}
+.cta-wide{width:100%;height:96px;border-radius:0;border:none;background:var(--brand-coral);color:#fff;font-size:28px;font-weight:600;letter-spacing:1px;display:flex;align-items:center;justify-content:center;gap:10px;box-shadow:0 4px 16px rgba(232,106,84,.35)}
+
+/* ======== 商品清单 Tab ======== */
+.cat-tabs{display:flex;overflow-x:auto;gap:16px;padding:0 32px;margin-bottom:16px;scrollbar-width:none}
+.cat-tabs::-webkit-scrollbar{display:none}
+.cat-tab{flex-shrink:0;font-size:24px;color:var(--ink-soft);padding:8px 16px;border-radius:99px;background:transparent;font-weight:500;cursor:pointer;transition:all .2s}
+.cat-tab.active{background:var(--ink);color:var(--paper-card);font-weight:700}
+
+.goods-list{padding:0 32px 140px;display:flex;flex-direction:column;gap:16px}
+.gcard{background:var(--paper-card);border-radius:24px;padding:20px 24px;box-shadow:var(--shadow-card);display:flex;align-items:center;gap:16px;cursor:pointer}
+.gcard:active{background:rgba(232,184,74,.05)}
+.gcard .num-sec{text-align:right;min-width:80px}
+.gcard .num-sec .num{font-family:serif;font-weight:700;font-size:56px;line-height:1}
+.gcard .num-sec .num.red{color:var(--status-red)}
+.gcard .num-sec .num.yellow{color:var(--status-yellow)}
+.gcard .num-sec .num.green{color:var(--status-green)}
+.gcard .num-sec .unit{font-size:20px;color:var(--ink-soft)}
+.gcard .info{flex:1}
+.gcard .name{font-size:30px;font-weight:600;font-family:serif;line-height:1.3}
+.gcard .meta{display:flex;flex-wrap:wrap;gap:6px;margin-top:8px}
+.gcard .meta span{font-size:18px;color:var(--ink-mute);background:var(--paper-base);padding:2px 10px;border-radius:8px}
+.gcard .meta .loc{color:var(--brand-coral);background:rgba(232,106,84,.1)}
+
+.gcard .arrow{color:var(--ink-soft);font-size:36px;line-height:1}
+
+/* ======== 底部 TAB ======== */
+.bot-nav{position:absolute;left:0;right:0;bottom:0;height:108px;padding-bottom:env(safe-area-inset-bottom,12px);background:var(--paper-card);display:flex;justify-content:space-around;align-items:center;box-shadow:0 -2px 12px rgba(46,35,24,.06)}
+.bot-nav .item{display:flex;flex-direction:column;align-items:center;gap:6px;font-size:20px;color:var(--ink-soft);font-weight:500;cursor:pointer}
+.bot-nav .item .ico{font-size:36px;line-height:1}
+.bot-nav .item.active{color:var(--brand-coral);font-weight:700}
+
+/* ======== 录入页 ======== */
+.scan-area{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:200px 40px 0;gap:24px}
+.scan-box{width:240px;height:240px;border:4px solid var(--brand-coral);border-radius:32px;display:flex;align-items:center;justify-content:center;font-size:120px;background:var(--paper-card)}
+.scan-tip{color:var(--ink-soft);font-size:24px}
+.scan-cam{display:flex;flex-direction:column;align-items:center;gap:12px;font-size:22px;color:var(--ink-soft)}
+.pad{padding:0 32px 140px;margin-top:24px}
+.pad h2{font-size:36px;font-family:serif;font-weight:600;margin-bottom:8px}
+.pad p{color:var(--ink-soft);font-size:26px;line-height:1.5}
+
+/* ======== 详情页 (reuse old) ======== */
+.detail-head{padding:24px 32px 0}
+.btn-back{font-size:32px;color:var(--brand-coral);font-weight:600;background:none;border:none;cursor:pointer}
+.detail-title{font-size:44px;font-family:serif;font-weight:600;margin-top:16px;line-height:1.2}
+.detail-sub{color:var(--ink-soft);font-size:22px;margin-top:8px;text-transform:uppercase;letter-spacing:1px;font-weight:500}
+
+.pill-row{display:flex;gap:12px;flex-wrap:wrap;margin:24px 32px 0}
+.pill{padding:6px 16px;border-radius:12px;font-size:22px;background:rgba(107,93,79,.08);color:var(--ink)}
+.pill.butter{background:rgba(232,184,74,.3);color:#7A5818;font-weight:600}
+.pill.coral{background:var(--brand-coral);color:#fff;font-weight:600}
+
+.num-hero{text-align:center;padding:32px 32px 8px}
+.num-hero .num{font-family:serif;font-weight:700;font-size:120px;line-height:1}
+.num-hero .num small{font-size:28px;color:var(--ink-soft);font-weight:500}
+.loc-line{text-align:center;color:var(--ink-soft);font-size:22px;margin:8px 0 28px}
+
+.bar-wide{margin:0 32px 24px;height:12px;border-radius:6px;background:rgba(107,93,79,.12);overflow:hidden}
+.bar-wide i{display:block;height:100%;border-radius:6px}
+
+.card-spec{background:var(--paper-card);margin:0 32px 24px;padding:24px;border-radius:24px;box-shadow:var(--shadow-card)}
+.section-title{font-size:22px;color:var(--ink-soft);text-transform:uppercase;letter-spacing:1px;font-weight:600;margin-bottom:16px}
+.spec-line{display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px dashed rgba(107,93,79,.15);font-size:26px}
+.spec-line:last-child{border:none}
+.spec-line .k{color:var(--ink-soft);font-size:24px}
+.spec-line .v{color:var(--brand-coral);font-weight:600}
+
+.cta-stack{padding:0 32px 40px;display:flex;flex-direction:column;gap:16px;margin-top:16px}
+.cta{height:96px;border-radius:0;border:none;font-size:28px;font-weight:600;cursor:pointer;display:flex;align-items:center;justify-content:center;letter-spacing:1px}
+.cta.primary{background:var(--brand-coral);color:#fff;box-shadow:0 4px 16px rgba(232,106,84,.35)}
+.cta.secondary{background:var(--paper-card);color:var(--ink);border:2px solid var(--ink)}
+.cta.ghost{background:transparent;color:var(--brand-coral);text-decoration:underline;text-underline-offset:6px;font-size:24px}
+
+/* ======== 切换器 ======== */
+.switcher{position:fixed;top:12px;left:50%;transform:translateX(-50%);background:rgba(255,255,255,.92);backdrop-filter:blur(8px);padding:6px;border-radius:99px;display:flex;gap:4px;box-shadow:0 2px 16px rgba(0,0,0,.12);z-index:99}
+.switcher button{border:none;background:transparent;padding:8px 16px;border-radius:99px;font-size:13px;cursor:pointer;font-weight:600;color:#6B5D4F}
+.switcher button.active{background:var(--brand-coral);color:#fff}
+
+.dot{width:14px;height:14px;border-radius:50%;display:inline-block;margin-right:8px}
+.dot.red{background:var(--status-red)}
+.dot.yellow{background:var(--status-yellow);animation:breath 3s ease-in-out infinite}
+.dot.green{background:var(--status-green)}
+@keyframes breath{0%,100%{opacity:.6}50%{opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- 切换器 -->
+<div class="switcher">
+  <button onclick="show(0)" id="b0" class="active">① 首页 (v2)</button>
+  <button onclick="show(1)" id="b1">② 商品详情</button>
+  <button onclick="show(2)" id="b2">③ 手/语录入</button>
+  <button onclick="show(3)" id="b3">④ 我的</button>
+</div>
+
+<!-- ============ SCREEN 0: 首页 v2 ============ -->
+<div class="screen active" id="s0">
+  <div class="topbar">
+    <div class="brand"><em>囤</em>耗材</div>
+    <div class="avatar">阿</div>
+  </div>
+
+  <!-- 4 个功能按钮 -->
+  <div class="four-btn-row">
+    <div class="fq one"><div class="ico">📷</div><div class="lbl">拍照录入</div></div>
+    <div class="fq two"><div class="ico">🎙️</div><div class="lbl">语音录入</div></div>
+    <div class="fq three"><div class="ico">🔍</div><div class="lbl">扫码录入</div></div>
+    <div class="fq four"><div class="ico">✍️</div><div class="lbl">手动录入</div></div>
+  </div>
+
+  <!-- 卡片：模版导入 -->
+  <div class="card">
+    <h3><span class="step">1</span> 模版导入</h3>
+    <div class="tpl-grid">
+      <div class="tpl-item"><div class="emoji">🍼</div><div class="name">母婴待产</div><div class="num">32 项</div></div>
+      <div class="tpl-item"><div class="emoji">🌾</div><div class="name">粮油干货</div><div class="num">28 项</div></div>
+      <div class="tpl-item"><div class="emoji">🧹</div><div class="name">日用清洁</div><div class="num">41 项</div></div>
+      <div class="tpl-item"><div class="emoji">💊</div><div class="name">急救药箱</div><div class="num">18 项</div></div>
+    </div>
+  </div>
+
+  <!-- 卡片：今日补货提醒 -->
+  <div class="card">
+    <h3><span class="step">2</span> 今日补货提醒</h3>
+    <div class="alert-num">
+      <div class="alert-cell">
+        <div class="num warn">5</div>
+        <div class="lbl">即将用完</div>
+      </div>
+      <div class="alert-cell">
+        <div class="num over">2</div>
+        <div class="lbl">已用完</div>
+      </div>
+    </div>
+    <button class="cta-wide">🛒 一键整理采购清单</button>
+  </div>
+
+  <!-- 已录入商品清单 -->
+  <div class="cat-tabs">
+    <div class="cat-tab active">全部</div>
+    <div class="cat-tab">母婴待产</div>
+    <div class="cat-tab">粮油干货</div>
+    <div class="cat-tab">日用清洁</div>
+    <div class="cat-tab">急救药箱</div>
+  </div>
+
+  <div class="goods-list">
+    <!-- 红 / 快用完 -->
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">Tempo 经典手帕纸</div>
+        <div class="meta"><span class="loc">📍 浴室柜第二层</span><span>🧻 纸巾 · 香港</span></div>
+      </div>
+      <div class="num-sec"><div class="num red">2<div class="unit">天后用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">清风 厨房纸 6卷</div>
+        <div class="meta"><span class="loc">📍 厨房/吊柜左</span><span>🧻 厨房纸 · 上海</span></div>
+      </div>
+      <div class="num-sec"><div class="num red">0<div class="unit">已用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+    <!-- 黄色 -->
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">维达 棉韧抽纸 120抽</div>
+        <div class="meta"><span class="loc">📍 客厅/白色柜子顶部</span><span>🧻 抽纸 · 广东</span></div>
+      </div>
+      <div class="num-sec"><div class="num yellow">5<div class="unit">天后用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">心相印 24包箱装</div>
+        <div class="meta"><span class="loc">📍 玄关/鞋柜下格</span><span>🧻 纸巾 · 福建</span></div>
+      </div>
+      <div class="num-sec"><div class="num yellow">9<div class="unit">天后用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+    <!-- 绿色 -->
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">德宝 加厚纸巾 24包</div>
+        <div class="meta"><span class="loc">📍 储藏室/铁架第三层</span><span class="num green">⭐ 质量第 1</span><span>🧻 纸巾 · 德国</span></div>
+      </div>
+      <div class="num-sec"><div class="num green">23<div class="unit">天后用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+    <div class="gcard" onclick="show(1)">
+      <div class="info">
+        <div class="name">SK-II 神仙水 230ml</div>
+        <div class="meta"><span class="loc">📍 主卧/梳妆台第二层</span><span>💄 化妆品 · 日本</span></div>
+      </div>
+      <div class="num-sec"><div class="num green">61<div class="unit">天后用完</div></div></div>
+      <div class="arrow">›</div>
+    </div>
+  </div>
+
+  <div class="bot-nav">
+    <div class="item active"><div class="ico">📒</div><div>首页</div></div>
+    <div class="item" onclick="show(2)"><div class="ico">➕</div><div>录入</div></div>
+    <div class="item" onclick="show(3)"><div class="ico">👤</div><div>我的</div></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 1: 商品详情 (同 v1) ============ -->
+<div class="screen" id="s1">
+  <div class="detail-head">
+    <button class="btn-back" onclick="show(0)">‹ 返回</button>
+    <div class="detail-title">维达棉韧抽纸</div>
+    <div class="detail-sub">Vinda · 120抽 · 24包/箱</div>
+  </div>
+
+  <div class="pill-row">
+    <span class="pill butter">德棉 原生木浆</span>
+    <span class="pill butter">尺寸 200×180mm</span>
+    <span class="pill coral">质量评分 4 / 5</span>
+  </div>
+
+  <div class="num-hero">
+    <div class="num" style="color:var(--status-yellow)">5<small>天后用完</small></div>
+    <div class="loc-line">📍 客厅 / 白色柜子顶部</div>
+  </div>
+
+  <div class="bar-wide"><i style="width:42%;background:var(--status-yellow)"></i></div>
+
+  <div class="card-spec">
+    <div class="section-title">基础信息</div>
+    <div class="spec-line"><span class="k">分　类</span><span class="v">日用清洁</span></div>
+    <div class="spec-line"><span class="k">品　牌</span><span class="v">维达 Vinda</span></div>
+    <div class="spec-line"><span class="k">质量评</span><span class="v">⭐⭐⭐⭐ 棉韧、压花，次于德宝</span></div>
+    <div class="spec-line"><span class="k">材　质</span><span class="v">100% 原生木浆</span></div>
+    <div class="spec-line"><span class="k">重　量</span><span class="v">≈480 g / 包</span></div>
+    <div class="spec-line"><span class="k">体　积</span><span class="v">240×120×95 mm</span></div>
+    <div class="spec-line"><span class="k">场　景</span><span class="v">客厅 · 日常 · 全屋</span></div>
+    <div class="spec-line"><span class="k">入库日期</span><span class="v">2026-07-15</span></div>
+    <div class="spec-line"><span class="k">单　价</span><span class="v">￥3.28 / 包</span></div>
+  </div>
+
+  <div class="card-spec">
+    <div class="section-title">规格明细</div>
+    <div class="spec-line"><span class="k">抽　数</span><span class="v">120 抽</span></div>
+    <div class="spec-line"><span class="k">张　数</span><span class="v">240 张（2层）</span></div>
+    <div class="spec-line"><span class="k">尺　寸</span><span class="v">200×180 mm</span></div>
+    <div class="spec-line"><span class="k">层　数</span><span class="v">3</span></div>
+  </div>
+
+  <div class="cta-stack">
+    <button class="cta primary">📦 开封新批次</button>
+    <button class="cta secondary">🗑 标记用完</button>
+    <button class="cta ghost">调整剩余量</button>
+  </div>
+</div>
+
+<!-- ============ SCREEN 2: 手动录入 (简化) ============ -->
+<div class="screen" id="s2">
+  <div class="topbar">
+    <button class="btn-back" onclick="show(0)">‹ 取消</button>
+    <div class="brand" style="flex:1;text-align:center"><em>囤</em>录入</div>
+    <div style="width:80px"></div>
+  </div>
+
+  <div class="scan-area">
+    <div class="scan-box">📷</div>
+    <div class="scan-tip">扫条码，或者直接录入</div>
+    <div class="scan-cam">📷 点击拍照 · 🎤 · ✍️</div>
+  </div>
+
+  <div class="pad">
+    <h2>拍照录入</h2>
+    <p>拍商品包装，OCR 自动识别品名、品牌、化妆品成分表。</p>
+  </div>
+  <div class="pad">
+    <h2>语音录入</h2>
+    <p>对着手机念 "客厅白色柜子顶部的德宝纸巾还有 5 天"，一句搞定。</p>
+  </div>
+  <div class="pad">
+    <h2>扫码录入</h2>
+    <p>扫包装上的商品条码，自动匹配商品数据库，秒填表。</p>
+  </div>
+  <div class="pad">
+    <h2>手动录入</h2>
+    <p>选分类 → 填品牌/品名/规格/数量/位置，四步搞定。</p>
+  </div>
+
+  <div class="bot-nav">
+    <div class="item" onclick="show(0)"><div class="ico">📒</div><div>首页</div></div>
+    <div class="item active"><div class="ico">➕</div><div>录入</div></div>
+    <div class="item" onclick="show(3)"><div class="ico">👤</div><div>我的</div></div>
+  </div>
+</div>
+
+<!-- ============ SCREEN 3: 我的 ============ -->
+<div class="screen" id="s3">
+  <div class="topbar">
+    <div class="brand">　</div>
+    <div class="avatar">阿</div>
+  </div>
+
+  <div class="card" style="padding:32px;text-align:center">
+    <div style="width:120px;height:120px;border-radius:50%;background:var(--brand-butter);margin:0 auto;display:flex;align-items:center;justify-content:center;font-size:64px;font-family:serif;font-weight:700;color:#fff">阿</div>
+    <div style="font-size:36px;font-family:serif;font-weight:700;margin-top:16px">阿囤</div>
+    <div style="font-size:22px;color:var(--ink-soft)">已录入 142 件 · 2026.07.15 启用</div>
+  </div>
+
+  <div class="card">
+    <div class="spec-line"><span class="k">📦 模版</span><span class="v">母婴/粮油/日用/急救</span></div>
+    <div class="spec-line"><span class="k">🎙 语音提醒</span><span class="v">已开启 · 每晚 21:30</span></div>
+    <div class="spec-line"><span class="k">👨‍👩‍👧 家庭共享</span><span class="v" style="color:var(--ink-soft)">未开通 · 一对夫妻一个账号</span></div>
+    <div class="spec-line"><span class="k">☁ 数据同步</span><span class="v" style="color:var(--ink-soft)">仅本机 · V2 云端</span></div>
+    <div class="spec-line"><span class="k">📊 统计</span><span class="v">本月已采购 ¥ 847</span></div>
+  </div>
+
+  <div style="height:40px"></div>
+  <div class="bot-nav">
+    <div class="item" onclick="show(0)"><div class="ico">📒</div><div>首页</div></div>
+    <div class="item" onclick="show(2)"><div class="ico">➕</div><div>录入</div></div>
+    <div class="item active"><div class="ico">👤</div><div>我的</div></div>
+  </div>
+</div>
+
+<script>
+function show(i){
+  document.querySelectorAll('.screen').forEach((s,k)=>s.classList.toggle('active',k===i));
+  for(let k=0;k<4;k++){
+    const btn=document.getElementById('b'+k);
+    if(btn) btn.classList.toggle('active',k===i);
+  }
+  window.scrollTo(0,0);
+}
+document.querySelectorAll('.cat-tab').forEach(t=>{
+  t.addEventListener('click',function(){
+    document.querySelectorAll('.cat-tab').forEach(x=>x.classList.remove('active'));this.classList.add('active');
+  })
+});
+</script>
+</body>
+</html>
